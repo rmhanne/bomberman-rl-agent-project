@@ -30,7 +30,7 @@ EVAL_DIR = REPO / 'results' / 'eval'
 FIG_DIR = REPO / 'figures'
 
 #color config
-SURFACE = '#fcfcfb'
+SURFACE = '#ffffff' # To fit with report color
 INK = '#0b0b0b'
 INK_2 = '#52514e'
 MUTED = '#898781'
