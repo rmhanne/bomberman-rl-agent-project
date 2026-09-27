@@ -62,11 +62,42 @@ BASE = dict(
     log_csv=None,                # defaults to '<checkpoint stem>_train.csv'
 )
 
+# actual rewards that give scores in game are disproportionally more weighted than 'aesthetic' rewards
+REAL_GAME_REWARDS_MUL = 15.0
 
 # Real game rewards:
 # Coin: 1
 # Kill: 5
 DEFAULT_REWARDS = {
+    # genuine game events
+    'COIN_COLLECTED': 1.0 * REAL_GAME_REWARDS_MUL,
+    'KILLED_OPPONENT': 5.0 * REAL_GAME_REWARDS_MUL,
+    'KILLED_SELF': -25.0,
+    'GOT_KILLED': -15.0 + (1.0 / 3.0 * 5.0) * REAL_GAME_REWARDS_MUL, # -15 for dying, but also, adding a third of the score gained by another opponent. Assuming all
+    # opponents are equally good, it's most likely not one single opponent repeatedly kills us, and thus gets a third of the score
+    'CRATE_DESTROYED': 1.0,
+    'COIN_FOUND': 0.25, # Coin found is nice, but it's not giving a score until collected
+    'SURVIVED_ROUND': (1.0 / 400.0) * REAL_GAME_REWARDS_MUL , # Surviving a round is nice, but it's not giving us anything
+    # if we don't collect anything or kill someone (max 400 rounds so, let's say it's equal to maybe a single coin if we survive til the end
+    'OPPONENT_ELIMINATED': 0.5, # It is nice if someone else but us gets killed but it doesn'T help us get points
+    'INVALID_ACTION': -0.35,
+    'WAITED': -(1.0 / 400.0) * REAL_GAME_REWARDS_MUL,
+
+    # aux events raised by rewards.py, not present in the actual game tho
+    'SUICIDAL_BOMB': -10.0,      # dropped a bomb with no escape route
+    'UNSAFE_MOVE': -2.5,         # stepped somewhere with no escape route
+    'USELESS_BOMB': -0.05,       # bomb that can hit neither crate nor opponent
+    'GOOD_BOMB': 0.75,           # bomb next to crates, escape available
+    'ATTACK_BOMB': 0.25 * REAL_GAME_REWARDS_MUL,          # bomb that can catch an opponent
+    'ESCAPED_DANGER': (3.0 / 400.0) * REAL_GAME_REWARDS_MUL,
+    'LINGERED_IN_DANGER': (3.0 / 400.0) * REAL_GAME_REWARDS_MUL,
+    'ENTERED_DANGER': -(8.0 / 400.0) * REAL_GAME_REWARDS_MUL,
+}
+
+# Real game rewards:
+# Coin: 1
+# Kill: 5
+DEFAULT_REWARDS_2 = {
     # genuine game events
     'COIN_COLLECTED': 5.0,
     'KILLED_OPPONENT': 15.0,
